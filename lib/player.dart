@@ -1,8 +1,10 @@
+import 'package:color_switch_game/ground.dart';
+import 'package:color_switch_game/my_game.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 
-class Player extends PositionComponent{
+class Player extends PositionComponent with HasGameRef<MyGame> {
   final Vector2 _velocity = Vector2.zero();
   final _gravity = 980.0;
   final _jumpSpeed = 350.0;
@@ -23,7 +25,16 @@ class Player extends PositionComponent{
     // TODO: implement update
     super.update(dt);
     position += _velocity * dt;
-    _velocity.y += _gravity * dt;
+
+    // do Ground đc add vào MyGame nên mới tìm đc
+    // và do đc thêm khi đã chắc chắn có onMount() nên ko null
+    Ground ground = gameRef.findByKeyName(Ground.keyName)!;
+    if (positionOfAnchor(Anchor.bottomCenter).y > ground.position.y) {
+      _velocity.setZero();
+      position.y = ground.position.y - (size.y / 2);
+    } else {
+      _velocity.y += _gravity * dt;
+    }
   }
 
   @override
