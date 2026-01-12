@@ -1,3 +1,4 @@
+import 'package:color_switch_game/circle_rotator.dart';
 import 'package:color_switch_game/ground.dart';
 import 'package:color_switch_game/player.dart';
 import 'package:flame/components.dart';
@@ -10,8 +11,15 @@ class MyGame extends FlameGame with TapCallbacks {
   static const cameraHeight = 1000.0;
 
   late Player myPlayer;
+  final List<Color> gameColors;
 
-  MyGame()
+  MyGame({this.gameColors = const [
+    Colors.redAccent,
+    Colors.greenAccent,
+    Colors.blueAccent,
+    Colors.yellowAccent,
+    Colors.grey,
+  ]})
       : super(
           camera: CameraComponent.withFixedResolution(
             width: cameraWidth,
@@ -21,7 +29,7 @@ class MyGame extends FlameGame with TapCallbacks {
 
   @override
   Color backgroundColor() {
-    return Colors.blueGrey;
+    return Colors.black;
   }
 
   @override
@@ -35,20 +43,17 @@ class MyGame extends FlameGame with TapCallbacks {
   void onMount() {
     // TODO: implement onMount
     super.onMount();
-    myPlayer = Player();
+    myPlayer = Player(position: Vector2(0, 200));
     world.add(Ground(position: Vector2(0, 400)));
     world.add(myPlayer);
-    world.add(RectangleComponent(position: Vector2(-100, -100), size: Vector2.all(20)));
-    world.add(RectangleComponent(position: Vector2(-200, 0), size: Vector2.all(20)));
-    world.add(RectangleComponent(position: Vector2(-300, 100), size: Vector2.all(20)));
+    generateGameComponents();
+    debugMode = true;
   }
 
   @override
   void update(double dt) {
     // TODO: implement update
     final camCenterY = camera.viewfinder.position.y;
-    final camBottomY = camCenterY + cameraHeight / 4;
-    final camTopY = camCenterY - cameraHeight / 4;
 
     final playerY = myPlayer.position.y;
 
@@ -64,5 +69,12 @@ class MyGame extends FlameGame with TapCallbacks {
     // TODO: implement onTapDown
     myPlayer.jump();
     super.onTapDown(event);
+  }
+
+  void generateGameComponents() {
+    world.add(CircleRotator(
+      position: Vector2(0, 0),
+      size: Vector2(200, 200),
+    ));
   }
 }

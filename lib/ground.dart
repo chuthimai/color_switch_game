@@ -16,7 +16,7 @@ class Ground extends PositionComponent {
     super.render(canvas);
     canvas.drawRect(
       Rect.fromLTRB(0, 0, width, height),
-      Paint()..color = Colors.black,
+      Paint()..color = Colors.white,
     );
   }
 }

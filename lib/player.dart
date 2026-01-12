@@ -10,13 +10,13 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
   final _jumpSpeed = 350.0;
   final _playerRadius = 15.0;
 
+  Player({required super.position});
+
   @override
   void onMount() {
     // TODO: implement onMount
-    position = Vector2.zero();
     size = Vector2.all(_playerRadius * 2);
     anchor = Anchor.center;
-    debugMode = true;
     super.onMount();
   }
 
