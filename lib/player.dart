@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 
 
 class Player extends PositionComponent{
-  final Vector2 _velocity = Vector2(0, 30.0);
+  final Vector2 _velocity = Vector2.zero();
   final _gravity = 980.0;
   final _jumpSpeed = 350.0;
+  final _playerRadius = 15.0;
 
   @override
   void onMount() {
     // TODO: implement onMount
-    position = Vector2(100, 100);
+    position = Vector2.zero();
+    size = Vector2.all(_playerRadius * 2);
+    anchor = Anchor.center;
+    debugMode = true;
     super.onMount();
   }
 
@@ -27,8 +31,8 @@ class Player extends PositionComponent{
     // TODO: implement render
     super.render(canvas);
     canvas.drawCircle(
-      position.toOffset(),
-      15,
+      (size/2).toOffset(),
+      _playerRadius,
       Paint()..color = Colors.white,
     );
   }
