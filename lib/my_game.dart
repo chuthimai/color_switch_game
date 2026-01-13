@@ -29,7 +29,7 @@ class MyGame extends FlameGame with TapCallbacks {
 
   @override
   Color backgroundColor() {
-    return Colors.black;
+    return Colors.white30;
   }
 
   @override
@@ -47,7 +47,7 @@ class MyGame extends FlameGame with TapCallbacks {
     world.add(Ground(position: Vector2(0, 400)));
     world.add(myPlayer);
     generateGameComponents();
-    debugMode = true;
+    // debugMode = true;
   }
 
   @override
