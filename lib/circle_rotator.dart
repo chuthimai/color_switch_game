@@ -2,16 +2,19 @@ import 'dart:math';
 
 import 'package:color_switch_game/my_game.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 
 class CircleRotator extends PositionComponent with HasGameRef<MyGame> {
   final double thickness;
+  final double rotationSpeed;
 
   CircleRotator({
     required super.position,
     required super.size,
     this.thickness = 20.0,
+    this.rotationSpeed = 1.0,
   })  : assert(size!.x == size.y),
         // chỉ chấp nhận size là hình vuông (width = height) nếu không → crash
         super(anchor: Anchor.center);
@@ -45,20 +48,17 @@ class CircleRotator extends PositionComponent with HasGameRef<MyGame> {
       ));
     }
 
+    add(RotateEffect.to(circle, EffectController(
+      speed: rotationSpeed,
+      infinite: true,
+    )));
+
   }
 
   @override
-  void render(Canvas canvas) {
-    final radius = (size.x / 2) - (thickness / 2);
-
-    // canvas.drawCircle(
-    //   (size / 2).toOffset(),
-    //   radius,
-    //   Paint()..color = Colors.blueAccent
-    //   ..style = PaintingStyle.stroke
-    //   ..strokeWidth = thickness,
-    // );
-    super.render(canvas);
+  void update(double dt) {
+    // angle += 0.01;
+    super.update(dt);
   }
 }
 
