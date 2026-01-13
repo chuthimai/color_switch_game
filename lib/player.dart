@@ -1,20 +1,38 @@
+import 'package:color_switch_game/circle_arc.dart';
+import 'package:color_switch_game/color_switcher.dart';
 import 'package:color_switch_game/ground.dart';
 import 'package:color_switch_game/my_game.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 
 
-class Player extends PositionComponent with HasGameRef<MyGame> {
+class Player extends PositionComponent with HasGameRef<MyGame>, CollisionCallbacks {
   final Vector2 _velocity = Vector2.zero();
+  Color _color = Colors.white;
+  late final List<Color> colors;
   final _gravity = 980.0;
   final _jumpSpeed = 350.0;
   final _playerRadius = 15.0;
+  bool _dead = false;
 
   Player({required super.position});
 
   @override
+  Future<void> onLoad() async {
+    // TODO: Tuỳ vao game mà có thể tạo HitBox cho từng phần
+    add(CircleHitbox(
+      radius: _playerRadius,
+      anchor: anchor,
+      collisionType: CollisionType.active,
+    ));
+    return super.onLoad();
+  }
+
+  @override
   void onMount() {
-    // TODO: implement onMount
+    colors = gameRef.gameColors.getRange(0, 4).toList();
     size = Vector2.all(_playerRadius * 2);
     anchor = Anchor.center;
     super.onMount();
@@ -22,7 +40,6 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
 
   @override
   void update(double dt) {
-    // TODO: implement update
     super.update(dt);
     position += _velocity * dt;
 
@@ -39,16 +56,39 @@ class Player extends PositionComponent with HasGameRef<MyGame> {
 
   @override
   void render(Canvas canvas) {
-    // TODO: implement render
     super.render(canvas);
     canvas.drawCircle(
       (size/2).toOffset(),
       _playerRadius,
-      Paint()..color = Colors.white,
+      Paint()..color = _color,
     );
   }
 
   void jump() {
     _velocity.y = - _jumpSpeed;
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (_dead) return;
+    super.onCollision(intersectionPoints, other);
+    if (other is ColorSwitcher) {
+      other.removeFromParent();
+      _changeColorRandomly();
+      return;
+    }
+    // TODO: Chỗ này có thể xảy ra player chạm vào 2 component 1
+    //  => onCollision gọi 2 lần trong 1 frame
+    if (other is CircleArc) {
+      if (other.color == _color) return;
+      _dead = true;
+      gameRef.gameOver();
+      return;
+    }
+
+  }
+
+  void _changeColorRandomly() {
+    _color = colors.random();
   }
 }
