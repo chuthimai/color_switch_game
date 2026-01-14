@@ -4,10 +4,12 @@ import 'package:color_switch_game/ground.dart';
 import 'package:color_switch_game/player.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/rendering.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 
-class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
+class MyGame extends FlameGame
+    with TapCallbacks, HasCollisionDetection, HasDecorator, HasTimeScale {
   static const cameraWidth = 600.0;
   static const cameraHeight = 1000.0;
 
@@ -41,6 +43,11 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
   }
 
   @override
+  void onLoad() {
+    super.onLoad();
+  }
+
+  @override
   void onMount() {
     _initialGame();
     super.onMount();
@@ -50,7 +57,7 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
   @override
   void update(double dt) {
     final camCenterY = camera.viewfinder.position.y;
-    final camBottomY = camCenterY + cameraHeight/2;
+    final camBottomY = camCenterY + cameraHeight / 2;
     final playerY = myPlayer.position.y;
 
     if (playerY < camCenterY) {
@@ -112,5 +119,18 @@ class MyGame extends FlameGame with TapCallbacks, HasCollisionDetection {
       element.removeFromParent();
     });
     _initialGame();
+  }
+
+  bool get isGamePause => timeScale == 0.0;
+
+  void pauseGame() {
+    // TODO: Do pause engine thì game ngừng render, nên decorator không được vẽ lại.
+    decorator = PaintDecorator.blur(8.0);
+    timeScale = 0.0;
+  }
+
+  void resumeGame() {
+    decorator = PaintDecorator.blur(0);
+    timeScale = 1.0;
   }
 }
