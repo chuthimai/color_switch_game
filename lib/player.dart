@@ -2,6 +2,7 @@ import 'package:color_switch_game/circle_arc.dart';
 import 'package:color_switch_game/color_switcher.dart';
 import 'package:color_switch_game/ground.dart';
 import 'package:color_switch_game/my_game.dart';
+import 'package:color_switch_game/star_component.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -17,7 +18,9 @@ class Player extends PositionComponent with HasGameRef<MyGame>, CollisionCallbac
   final _playerRadius = 15.0;
   bool _dead = false;
 
-  Player({required super.position});
+  Player({required super.position}): super(
+    priority: 20,
+  );
 
   @override
   Future<void> onLoad() async {
@@ -84,6 +87,11 @@ class Player extends PositionComponent with HasGameRef<MyGame>, CollisionCallbac
       _dead = true;
       gameRef.gameOver();
       return;
+    }
+
+    if (other is StarComponent) {
+      other.showCollectEffect();
+      gameRef.increaseScore();
     }
 
   }

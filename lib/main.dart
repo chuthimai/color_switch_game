@@ -34,20 +34,36 @@ class _HomePageState extends State<HomePage> {
         !_myGame.isGamePause
             ? Align(
                 alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: const Icon(Icons.pause),
-                  onPressed: () {
-                    setState(() {
-                      _myGame.pauseGame();
-                    });
-                  },
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.pause),
+                      onPressed: () {
+                        setState(() {
+                          _myGame.pauseGame();
+                        });
+                      },
+                    ),
+                    ValueListenableBuilder<int>(
+                      valueListenable: _myGame.currentScore,
+                      builder: (context, value, child) {
+                        return Text(
+                          value.toString(),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               )
             : const SizedBox(),
         _myGame.isGamePause
             ? Container(
-              color: Colors.black.withOpacity(0.5),
-              child: Center(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -74,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-            )
+              )
             : const SizedBox(),
       ]),
     );

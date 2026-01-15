@@ -2,6 +2,7 @@ import 'package:color_switch_game/circle_rotator.dart';
 import 'package:color_switch_game/color_switcher.dart';
 import 'package:color_switch_game/ground.dart';
 import 'package:color_switch_game/player.dart';
+import 'package:color_switch_game/star_component.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/rendering.dart';
@@ -15,6 +16,8 @@ class MyGame extends FlameGame
 
   late Player myPlayer;
   final List<Color> gameColors;
+
+  ValueNotifier<int> currentScore = ValueNotifier(0);
 
   MyGame(
       {this.gameColors = const [
@@ -65,8 +68,8 @@ class MyGame extends FlameGame
       return;
     }
 
-    if (playerY > camBottomY) {
-      camera.viewfinder.position = Vector2(0, playerY);
+    if (playerY >= camBottomY) {
+      camera.viewfinder.position = Vector2(0, camBottomY);
       return;
     }
 
@@ -80,6 +83,7 @@ class MyGame extends FlameGame
   }
 
   void _initialGame() {
+    currentScore.value = 0;
     myPlayer = Player(position: Vector2(0, 300));
     world.add(Ground(position: Vector2(0, 400)));
     world.add(myPlayer);
@@ -98,6 +102,10 @@ class MyGame extends FlameGame
       radius: 100,
     ));
 
+    world.add(StarComponent(
+      position: Vector2(0, 0),
+    ));
+
     world.add(
       ColorSwitcher(
         position: Vector2(0, -200),
@@ -110,7 +118,11 @@ class MyGame extends FlameGame
 
     world.add(CircleRotator(
       position: Vector2(0, -400),
-      radius: 150,
+      radius: 100,
+    ));
+
+    world.add(StarComponent(
+      position: Vector2(0, -400),
     ));
   }
 
@@ -124,7 +136,7 @@ class MyGame extends FlameGame
   bool get isGamePause => timeScale == 0.0;
 
   void pauseGame() {
-    // TODO: Do pause engine thì game ngừng render, nên decorator không được vẽ lại.
+    // TODO: Thực hiện pause engine thì game ngừng render, nên decorator không được vẽ lại.
     decorator = PaintDecorator.blur(8.0);
     timeScale = 0.0;
   }
@@ -132,5 +144,9 @@ class MyGame extends FlameGame
   void resumeGame() {
     decorator = PaintDecorator.blur(0);
     timeScale = 1.0;
+  }
+
+  void increaseScore() {
+    currentScore.value++;
   }
 }
