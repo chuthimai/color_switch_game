@@ -6,6 +6,7 @@ import 'package:color_switch_game/star_component.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/rendering.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 
@@ -48,6 +49,7 @@ class MyGame extends FlameGame
   @override
   void onLoad() {
     super.onLoad();
+    FlameAudio.bgm.initialize();
   }
 
   @override
@@ -89,6 +91,7 @@ class MyGame extends FlameGame
     world.add(myPlayer);
     camera.moveTo(Vector2(0, 0));
     generateGameComponents();
+    FlameAudio.bgm.play('background.mp3');
   }
 
   void generateGameComponents() {
@@ -127,6 +130,7 @@ class MyGame extends FlameGame
   }
 
   void gameOver() {
+    FlameAudio.bgm.stop();
     world.children.forEach((element) {
       element.removeFromParent();
     });
@@ -139,11 +143,13 @@ class MyGame extends FlameGame
     // TODO: Thực hiện pause engine thì game ngừng render, nên decorator không được vẽ lại.
     decorator = PaintDecorator.blur(8.0);
     timeScale = 0.0;
+    FlameAudio.bgm.pause();
   }
 
   void resumeGame() {
     decorator = PaintDecorator.blur(0);
     timeScale = 1.0;
+    FlameAudio.bgm.resume();
   }
 
   void increaseScore() {

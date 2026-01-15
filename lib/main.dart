@@ -29,70 +29,72 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(children: [
-        GameWidget(game: _myGame),
-        !_myGame.isGamePause
-            ? Align(
-                alignment: Alignment.topLeft,
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.pause),
-                      onPressed: () {
-                        setState(() {
-                          _myGame.pauseGame();
-                        });
-                      },
-                    ),
-                    ValueListenableBuilder<int>(
-                      valueListenable: _myGame.currentScore,
-                      builder: (context, value, child) {
-                        return Text(
-                          value.toString(),
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              )
-            : const SizedBox(),
-        _myGame.isGamePause
-            ? Container(
-                color: Colors.black.withOpacity(0.5),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      body: SafeArea(
+        child: Stack(children: [
+          GameWidget(game: _myGame),
+          !_myGame.isGamePause
+              ? Align(
+                  alignment: Alignment.topLeft,
+                  child: Row(
                     children: [
-                      const Text(
-                        "PAUSED!",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       IconButton(
-                        icon: const Icon(
-                          Icons.play_arrow,
-                          size: 140,
-                          color: Colors.white,
-                        ),
+                        icon: const Icon(Icons.pause),
                         onPressed: () {
                           setState(() {
-                            _myGame.resumeGame();
+                            _myGame.pauseGame();
                           });
+                        },
+                      ),
+                      ValueListenableBuilder<int>(
+                        valueListenable: _myGame.currentScore,
+                        builder: (context, value, child) {
+                          return Text(
+                            value.toString(),
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
                         },
                       ),
                     ],
                   ),
-                ),
-              )
-            : const SizedBox(),
-      ]),
+                )
+              : const SizedBox(),
+          _myGame.isGamePause
+              ? Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "PAUSED!",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 48,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.play_arrow,
+                            size: 140,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _myGame.resumeGame();
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : const SizedBox(),
+        ]),
+      ),
     );
   }
 }
