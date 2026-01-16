@@ -3,10 +3,10 @@
 Game có 1 quả bóng đổi màu sắc và sẽ đi qua đc cung tròn nếu cùng màu với cung trong đó
 
 Demo chi tiết như trong video dưới đây:
-<video src="./asset_readme/demo/demo.mp4" controls width="100%">
-Trình duyệt của bạn không hỗ trợ thẻ video.
-</video>
-[demo.mp4](https://github.com/chuthimai/color_switch_game/blob/main/asset_readme/demo/demo.mp4)
+
+https://github.com/user-attachments/assets/e14c68a6-124f-464f-bd56-d2724c4ed476
+
+
 ### Mục đích làm
 - Học lm game với flame
 - Làm quen tư duy tạo game
