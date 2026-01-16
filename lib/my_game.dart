@@ -7,6 +7,7 @@ import 'package:flame/rendering.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/services.dart';
 
 import 'object_pool/circle_rotator_pool.dart';
 import 'object_pool/color_switcher_pool.dart';
@@ -17,7 +18,8 @@ class MyGame extends FlameGame
         TapCallbacks,
         HasCollisionDetection,
         HasDecorator,
-        HasTimeScale {
+        HasTimeScale,
+        KeyboardEvents {
   static const cameraWidth = 600.0;
   static const cameraHeight = 1000.0;
 
@@ -104,6 +106,18 @@ class MyGame extends FlameGame
   void onTapDown(TapDownEvent event) {
     myPlayer.jump();
     super.onTapDown(event);
+  }
+
+  @override
+  KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    final isKeyDown = event is KeyDownEvent;
+    final isArrowUp = keysPressed.contains(LogicalKeyboardKey.arrowUp);
+    if (isArrowUp && isKeyDown) {
+      myPlayer.jump();
+      return KeyEventResult.handled;
+    }
+
+    return super.onKeyEvent(event, keysPressed);
   }
 
   void _initialGame() {
