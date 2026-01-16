@@ -13,12 +13,14 @@ class CircleArc extends PositionComponent
   final int precision;
   final int segments = 20;
 
+  final _paint = Paint();
+
   CircleArc({
     required this.color,
     required this.startAngle,
     required this.sweepAngle,
     this.precision = 6,
-  }): super(anchor: Anchor.center);
+  }) : super(anchor: Anchor.center);
 
   @override
   void onMount() {
@@ -60,7 +62,7 @@ class CircleArc extends PositionComponent
       sweepAngle,
       false,
       // true hiển thị cả đường bán kính, false là ko hiển thị đường bán kính
-      Paint()
+      _paint
         ..color = color
         ..style = PaintingStyle.stroke
         ..strokeWidth = parent.thickness,

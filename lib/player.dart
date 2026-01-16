@@ -19,6 +19,8 @@ class Player extends PositionComponent with HasGameRef<MyGame>, CollisionCallbac
   final _playerRadius = 15.0;
   bool _dead = false;
 
+  final _paint = Paint();
+
   Player({required super.position}): super(
     priority: 20,
   );
@@ -64,7 +66,7 @@ class Player extends PositionComponent with HasGameRef<MyGame>, CollisionCallbac
     canvas.drawCircle(
       (size/2).toOffset(),
       _playerRadius,
-      Paint()..color = _color,
+      _paint..color = _color,
     );
   }
 
@@ -77,9 +79,8 @@ class Player extends PositionComponent with HasGameRef<MyGame>, CollisionCallbac
     if (_dead) return;
     super.onCollision(intersectionPoints, other);
     if (other is ColorSwitcher) {
-      other.removeFromParent();
+      other.onRemove();
       _changeColorRandomly();
-      return;
     }
     // TODO: Chỗ này có thể xảy ra player chạm vào 2 component 1
     //  => onCollision gọi 2 lần trong 1 frame
@@ -94,6 +95,8 @@ class Player extends PositionComponent with HasGameRef<MyGame>, CollisionCallbac
       other.showCollectEffect();
       gameRef.increaseScore();
       FlameAudio.play('collect.wav');
+      other.onRemove();
+      gameRef.addCircleRotator();
     }
 
   }

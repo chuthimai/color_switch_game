@@ -1,12 +1,16 @@
 import 'dart:math';
 
+import 'package:color_switch_game/my_game.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
 
-class StarComponent extends SpriteComponent with CollisionCallbacks {
+class StarComponent extends SpriteComponent
+    with CollisionCallbacks, HasGameRef<MyGame> {
+  final _paint = Paint();
+
   StarComponent({
     required super.position,
   }) : super(
@@ -79,9 +83,9 @@ class StarComponent extends SpriteComponent with CollisionCallbacks {
                       anchor: Anchor.center,
 
                       // Màu vàng mờ dần theo progress (hiệu ứng fade-out)
-                      overridePaint: Paint()
-                        ..color = Colors.yellow
-                            .withOpacity(1 - particle.progress),
+                      overridePaint: _paint
+                        ..color =
+                            Colors.yellow.withOpacity(1 - particle.progress),
                     );
                   },
                 ),
@@ -94,8 +98,16 @@ class StarComponent extends SpriteComponent with CollisionCallbacks {
         ),
       ),
     );
+  }
 
-    // Đặt sau để xác định đc parent tồn tại
-    removeFromParent();
+  StarComponent updatePosition({required Vector2 newPosition}) {
+    position = newPosition;
+    return this;
+  }
+
+  @override
+  void onRemove() {
+    super.onRemove();
+    gameRef.starComponentPool.offer(this);
   }
 }

@@ -45,22 +45,31 @@ class _HomePageState extends State<HomePage> {
                           });
                         },
                       ),
-                      ValueListenableBuilder<int>(
-                        valueListenable: _myGame.currentScore,
-                        builder: (context, value, child) {
-                          return Text(
-                            value.toString(),
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        },
-                      ),
                     ],
                   ),
                 )
               : const SizedBox(),
+          Align(
+            alignment: Alignment.topCenter,
+            child: ValueListenableBuilder<int>(
+              valueListenable: _myGame.currentScore,
+              builder: (context, value, child) {
+                return Text(
+                  "Score: ${value.toString()}",
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black,
+                          offset: Offset(1, 1),
+                          blurRadius: 4,
+                        ),
+                      ]),
+                );
+              },
+            ),
+          ),
           _myGame.isGamePause
               ? Container(
                   color: Colors.black.withOpacity(0.5),

@@ -1,17 +1,23 @@
-import 'package:color_switch_game/circle_rotator.dart';
-import 'package:color_switch_game/color_switcher.dart';
 import 'package:color_switch_game/ground.dart';
 import 'package:color_switch_game/player.dart';
-import 'package:color_switch_game/star_component.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/rendering.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 
+import 'object_pool/circle_rotator_pool.dart';
+import 'object_pool/color_switcher_pool.dart';
+import 'object_pool/star_component_pool.dart';
+
 class MyGame extends FlameGame
-    with TapCallbacks, HasCollisionDetection, HasDecorator, HasTimeScale {
+    with
+        TapCallbacks,
+        HasCollisionDetection,
+        HasDecorator,
+        HasTimeScale {
   static const cameraWidth = 600.0;
   static const cameraHeight = 1000.0;
 
@@ -19,6 +25,10 @@ class MyGame extends FlameGame
   final List<Color> gameColors;
 
   ValueNotifier<int> currentScore = ValueNotifier(0);
+
+  final CircleRotatorPool circleRotatorPool = CircleRotatorPool();
+  final ColorSwitcherPool colorSwitcherPool = ColorSwitcherPool();
+  final StarComponentPool starComponentPool = StarComponentPool();
 
   MyGame(
       {this.gameColors = const [
@@ -47,9 +57,20 @@ class MyGame extends FlameGame
   }
 
   @override
-  void onLoad() {
-    super.onLoad();
+  void onLoad() async {
+    await super.onLoad();
+    camera.viewfinder.zoom = 1.0;
     FlameAudio.bgm.initialize();
+    // TODO: Tối ưu hiêu năng bằng cách load tất cả asset khi khởi tạo game
+    await Flame.images.loadAll([
+      'finger_tap.png',
+      'star_icon.png',
+    ]);
+
+    await FlameAudio.audioCache.loadAll([
+      'background.mp3',
+      'collect.wav',
+    ]);
   }
 
   @override
@@ -57,6 +78,7 @@ class MyGame extends FlameGame
     _initialGame();
     super.onMount();
     // debugMode = true;
+    add(FpsTextComponent());
   }
 
   @override
@@ -85,6 +107,10 @@ class MyGame extends FlameGame
   }
 
   void _initialGame() {
+    circleRotatorPool.resetPool();
+    colorSwitcherPool.resetPool();
+    starComponentPool.resetPool();
+
     currentScore.value = 0;
     myPlayer = Player(position: Vector2(0, 300));
     world.add(Ground(position: Vector2(0, 400)));
@@ -95,38 +121,17 @@ class MyGame extends FlameGame
   }
 
   void generateGameComponents() {
-    world.add(
-      ColorSwitcher(
-        position: Vector2(0, 180),
-      ),
-    );
-    world.add(CircleRotator(
-      position: Vector2(0, 0),
-      radius: 100,
-    ));
+    while (circleRotatorPool.circles.isNotEmpty) {
+      world.add(circleRotatorPool.provide() as Component);
+    }
 
-    world.add(StarComponent(
-      position: Vector2(0, 0),
-    ));
+    while (colorSwitcherPool.colorSwitchers.isNotEmpty) {
+      world.add(colorSwitcherPool.provide() as Component);
+    }
 
-    world.add(
-      ColorSwitcher(
-        position: Vector2(0, -200),
-      ),
-    );
-    world.add(CircleRotator(
-      position: Vector2(0, -400),
-      radius: 80,
-    ));
-
-    world.add(CircleRotator(
-      position: Vector2(0, -400),
-      radius: 100,
-    ));
-
-    world.add(StarComponent(
-      position: Vector2(0, -400),
-    ));
+    while (starComponentPool.stars.isNotEmpty) {
+      world.add(starComponentPool.provide() as Component);
+    }
   }
 
   void gameOver() {
@@ -154,5 +159,11 @@ class MyGame extends FlameGame
 
   void increaseScore() {
     currentScore.value++;
+  }
+
+  void addCircleRotator() {
+    if (currentScore.value >= 5) {
+      circleRotatorPool.offer();
+    }
   }
 }

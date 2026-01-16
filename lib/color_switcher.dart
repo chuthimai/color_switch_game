@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 class ColorSwitcher extends PositionComponent
     with HasGameRef<MyGame>, CollisionCallbacks {
   final double radius;
+  final _paint = Paint();
 
   ColorSwitcher({
     required super.position,
@@ -42,8 +43,19 @@ class ColorSwitcher extends PositionComponent
         i * sweepAngle,
         sweepAngle,
         true,
-        Paint()..color = gameRef.gameColors[i],
+        _paint..color = gameRef.gameColors[i],
       );
     }
+  }
+
+  ColorSwitcher updatePosition({required Vector2 newPosition}) {
+    position = newPosition;
+    return this;
+  }
+
+  @override
+  void onRemove() {
+    super.onRemove();
+    gameRef.colorSwitcherPool.offer(this);
   }
 }

@@ -1,12 +1,15 @@
 import 'dart:math';
 
+import 'package:color_switch_game/circle.dart';
 import 'package:color_switch_game/my_game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 
 import 'circle_arc.dart';
 
-class CircleRotator extends PositionComponent with HasGameRef<MyGame> {
+class CircleRotator extends PositionComponent
+    with HasGameRef<MyGame>
+    implements Circle {
   final double thickness;
   final double rotationSpeed;
   final double radius;
@@ -16,7 +19,7 @@ class CircleRotator extends PositionComponent with HasGameRef<MyGame> {
     required this.radius,
     this.thickness = 8.0,
     this.rotationSpeed = 1.0,
-  })  :super(anchor: Anchor.center) {
+  }) : super(anchor: Anchor.center) {
     size = Vector2.all(radius * 2);
   }
 
@@ -26,7 +29,7 @@ class CircleRotator extends PositionComponent with HasGameRef<MyGame> {
     double startAngle = 0;
     final rand = Random();
     // final numbers = [1/2, 1/8, 1/3, 1/4];
-    final numbers = [1/4];
+    final numbers = [1 / 4];
 
     for (int i = 0; i < gameRef.gameColors.length - 1; i++) {
       if (startAngle == circle) break;
@@ -51,11 +54,12 @@ class CircleRotator extends PositionComponent with HasGameRef<MyGame> {
       ));
     }
 
-    add(RotateEffect.to(circle, EffectController(
-      speed: rotationSpeed,
-      infinite: true,
-    )));
-
+    add(RotateEffect.to(
+        circle,
+        EffectController(
+          speed: rotationSpeed,
+          infinite: true,
+        )));
   }
 
   @override
@@ -63,5 +67,11 @@ class CircleRotator extends PositionComponent with HasGameRef<MyGame> {
     // TODO: Có thể thay thế RotateEffect
     // angle += 0.01;
     super.update(dt);
+  }
+
+  @override
+  CircleRotator updatePosition({required Vector2 newPosition}) {
+    position = newPosition;
+    return this;
   }
 }
